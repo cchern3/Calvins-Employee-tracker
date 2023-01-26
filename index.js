@@ -444,3 +444,41 @@ const updateManager = ()=> {
   })
   
 };
+
+//deleting departments
+const deleteDepartment = () => {
+  const departments = [];
+  connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
+    if (err) throw err;
+
+    res.forEach(dep => {
+      let querytheobj = {
+        name: dep.name,
+        value: dep.id
+      }
+      departments.push(querytheobj);
+    });
+
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: departments,
+        message: "Select a department you want to delete?"
+      }
+    ];
+
+    inquirer1.prompt(questions)
+    .then(response => {
+      const query = `DELETE FROM DEPARTMENT WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.allimpactedrows} row(s) has been deleted!`);
+        initprompt();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
