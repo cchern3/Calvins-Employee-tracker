@@ -45,7 +45,6 @@ function initprompt() {
     "Update an employee's manager", 
     "View employees by manager", 
     "Delete a department", 
-    "Delete a role", 
     "Delete an employee", 
     "View the total budget of a particular department", 
     "quit"]
@@ -84,9 +83,6 @@ function initprompt() {
         break;
       case "Delete a department":
         deleteDepartment();
-        break;
-      case "Delete a role":
-        deleteRole();
         break;
       case "Delete an employee":
         deleteEmployee();
@@ -360,7 +356,7 @@ const viewTableEmployeeByManager =  () => {
         let manager_id, query;
         if (response.manager_id) {
           query = `SELECT EMPLOYEE.id AS id, EMPLOYEE.first_name AS first_name, EMPLOYEE.last_name AS last_name, 
-          R.title AS role, DEPARTMENT.name AS department, CONCAT(E.first_name, " ", E.last_name) AS manager
+          ROLE.title AS role, DEPARTMENT.name AS department, CONCAT(E.first_name, " ", E.last_name) AS manager
           FROM EMPLOYEE LEFT JOIN ROLE ON EMPLOYEE.role_id = ROLE.id
           LEFT JOIN DEPARTMENT ON ROLE.department_id = DEPARTMENT.id
           LEFT JOIN EMPLOYEE AS E ON EMPLOYEE.manager_id = E.id
@@ -474,44 +470,6 @@ const deleteDepartment = () => {
       connection.query(query, [response.id], (err, res) => {
         if (err) throw err;
         console.log(`${res.allimpactedrows} row(s) has been deleted!`);
-        initprompt();
-      });
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  });
-};
-
-//deleting roles
-const deleteRole = () => {
-  const departments = [];
-  connection.query("SELECT * FROM ROLE", (err, res) => {
-    if (err) throw err;
-
-    const roleChoice = [];
-    res.forEach(({ title, id }) => {
-      roleChoice.push({
-        name: title,
-        value: id
-      });
-    });
-
-    let questions = [
-      {
-        type: "list",
-        name: "id",
-        choices: roleChoice,
-        message: "Select a role do you want to delete?"
-      }
-    ];
-
-    inquirer1.prompt(questions)
-    .then(response => {
-      const query = `DELETE FROM ROLE WHERE id = ?`;
-      connection.query(query, [response.id], (err, res) => {
-        if (err) throw err;
-        console.log(`${res.allimpactedrows} row(s) have been deleted!`);
         initprompt();
       });
     })
