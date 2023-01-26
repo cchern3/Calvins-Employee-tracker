@@ -557,3 +557,47 @@ const deleteEmployee = () => {
     });
   });
 };
+
+//going through budgets, can be null if there are no employees in the department
+const viewBudgetTable = () => {
+  connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
+    if (err) throw err;
+
+    const choicefromdept = [];
+    res.forEach(({ name, id }) => {
+      choicefromdept.push({
+        name: name,
+        value: id
+      });
+    });
+
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: choicefromdept,
+        message: "Select which department's budget you want to see:"
+      }
+    ];
+
+    inquirer1.prompt(questions)
+    .then(response => {
+      const query = `SELECT DEPARTMENT.name, SUM(salary) AS budget FROM
+      EMPLOYEE LEFT JOIN ROLE
+      ON EMPLOYEE.role_id = ROLE.id
+      LEFT JOIN DEPARTMENT
+      ON ROLE.department_id = DEPARTMENT.id
+      WHERE DEPARTMENT.id = ?
+      `;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        initprompt();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+
+};
