@@ -330,3 +330,117 @@ const updateRole = () => {
       })
   });
 }
+
+const viewTableEmployeeByManager =  () => {
+  //obtain the employee list through managers
+  connection.query("SELECT * FROM EMPLOYEE", (err, refremployee) => {
+    if (err) throw err;
+    const optionsofEmployee = [{
+      name: 'None',
+      value: 0
+    }];
+    refremployee.forEach(({ first_name, last_name, id }) => {
+      optionsofEmployee.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questions = [
+      {
+        type: "list",
+        name: "manager_id",
+        choices: optionsofEmployee,
+         message: "Whose role would you want to update?"
+      },
+    ]
+  
+    inquirer1.prompt(questions)
+      .then(response => {
+        let manager_id, query;
+        if (response.manager_id) {
+          query = `SELECT EMPLOYEE.id AS id, EMPLOYEE.first_name AS first_name, EMPLOYEE.last_name AS last_name, 
+          R.title AS role, DEPARTMENT.name AS department, CONCAT(E.first_name, " ", E.last_name) AS manager
+          FROM EMPLOYEE LEFT JOIN ROLE ON EMPLOYEE.role_id = ROLE.id
+          LEFT JOIN DEPARTMENT ON ROLE.department_id = DEPARTMENT.id
+          LEFT JOIN EMPLOYEE AS E ON EMPLOYEE.manager_id = E.id
+          WHERE EMPLOYEE.manager_id = ?;`;
+        } else {
+          manager_id = null;
+          query = `SELECT EMPLOYEE.id AS id, EMPLOYEE.first_name AS first_name, EMPLOYEE.last_name AS last_name, 
+          ROLE.title AS role, DEPARTMENT.name AS department, CONCAT(E.first_name, " ", E.last_name) AS manager
+          FROM EMPLOYEE LEFT JOIN ROLE ON EMPLOYEE.role_id = ROLE.id
+          LEFT JOIN DEPARTMENT ON ROLE.department_id = DEPARTMENT.id
+          LEFT JOIN EMPLOYEE AS E ON EMPLOYEE.manager_id = E.id
+          WHERE EMPLOYEE.manager_id is null;`;
+        }
+        connection.query(query, [response.manager_id], (err, res) => {
+          if (err) throw err;
+          console.table(res);
+          initprompt();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      }); 
+  });
+}
+
+const updateManager = ()=> {
+  //acquire the employee list 
+  connection.query("SELECT * FROM EMPLOYEE", (err, refremployee) => {
+    if (err) throw err;
+    const optionsofEmployee = [];
+    refremployee.forEach(({ first_name, last_name, id }) => {
+      optionsofEmployee.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+    
+    const managerChoice = [{
+      name: 'None',
+      value: 0
+    }]; //no manager can be an option
+    refremployee.forEach(({ first_name, last_name, id }) => {
+      managerChoice.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: optionsofEmployee,
+        message: "Who would you want to update?"
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        choices: managerChoice,
+        message: "Select the employee's new manager:"
+      }
+    ]
+  //updating employee
+    inquirer1.prompt(questions)
+      .then(response => {
+        const query = `UPDATE EMPLOYEE SET ? WHERE id = ?;`;
+        let manager_id = response.manager_id !== 0? response.manager_id: null;
+        connection.query(query, [
+          {manager_id: manager_id},
+          response.id
+        ], (err, res) => {
+          if (err) throw err;
+            
+          console.log("You have updated the employee's manager");
+          initprompt();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  })
+  
+};
