@@ -482,3 +482,41 @@ const deleteDepartment = () => {
     });
   });
 };
+
+//deleting roles
+const deleteRole = () => {
+  const departments = [];
+  connection.query("SELECT * FROM ROLE", (err, res) => {
+    if (err) throw err;
+
+    const roleChoice = [];
+    res.forEach(({ title, id }) => {
+      roleChoice.push({
+        name: title,
+        value: id
+      });
+    });
+
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: roleChoice,
+        message: "Select a role do you want to delete?"
+      }
+    ];
+
+    inquirer1.prompt(questions)
+    .then(response => {
+      const query = `DELETE FROM ROLE WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.allimpactedrows} row(s) have been deleted!`);
+        initprompt();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
