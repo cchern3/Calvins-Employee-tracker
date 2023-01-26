@@ -1,28 +1,28 @@
-INSERT INTO departments (name)
-VALUES
-('Engineering'),
-('Finance'),
-('Sales'),
-('Legal');
+INSERT INTO department (name)
+VALUES ("engineering"),
+    ("finance"),
+    ("marketing"),
+    ("sales");
 
-INSERT INTO roles (title, salary, department_id)
-VALUES
-('Sales Lead', 100000, 3),
-('Salesperson', 80000, 3),
-('Lead Engineer', 150000, 1).
-('Software Engineer', 120000, 1),
-('Account Manager', 160000, 2),
-('Accountant', 125000, 2),
-('Legal Team Lead', 250000, 4),
-('Lawyer', 190000, 4);
+SELECT * FROM DEPARTMENT;
 
-INSERT INTO employees (first_name, last_name, role_id, manager_id)
-VALUES
-('John', 'Doe', 1, null),
-('Mike', 'Chan', 2, 1),
-('Ashley', 'Rodriguez', 3, null),
-('Laura', 'Trapaga', 4, 3),
-('Kunal', 'Singh', 5, null),
-('Malia', 'Brown', 6, 5),
-('Sarah', 'Lourd', 7, null),
-('Calvin', 'Chern', 8, 7);
+INSERT INTO role (title, salary, department_id)
+VALUES ("software engineer", 130000, 1),
+    ("lead project manager", 100000, 1),
+    ("lead engineering manager", 250000, 1),
+    ("junior accountant", 60000, 2),
+    ("accounting manager", 200000, 2),
+    ("product marketing manager", 75000, 3),
+    ("lead of marketing", 250000, 3),
+    ("sales representative", 90000, 4);
+
+SELECT * FROM ROLE;
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Laura", "Trapaga", 3, NULL),
+    ("Calvin", "Chern", 3, 1),
+    ("Silvana", "Gonzalez", 1, 2),
+    ("Alex", "Chern", 1, 2),
+    ("Jourdan", "Delacruz", 2, 1);
+
+SELECT * FROM employee;
