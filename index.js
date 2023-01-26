@@ -520,3 +520,40 @@ const deleteRole = () => {
     });
   });
 };
+
+//deleting an employee
+const deleteEmployee = () => {
+  connection.query("SELECT * FROM EMPLOYEE", (err, res) => {
+    if (err) throw err;
+
+    const optionsofEmployee = [];
+    res.forEach(({ first_name, last_name, id }) => {
+      optionsofEmployee.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+
+    let questions = [
+      {
+        type: "list",
+        name: "id",
+        choices: optionsofEmployee,
+        message: "Which employee would you want to delete?"
+      }
+    ];
+
+    inquirer1.prompt(questions)
+    .then(response => {
+      const query = `DELETE FROM EMPLOYEE WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.allimpactedrows} row(s) successfully deleted!`);
+        initprompt();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
