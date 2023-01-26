@@ -150,7 +150,7 @@ const addNewDept = () => {
 }
 
 const addNewRole = () => {
-  //get the list of all department with department_id to make the choices object list for prompt question
+  //obtain list of department
   const depts = [];
   connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
     if (err) throw err;
@@ -163,23 +163,23 @@ const addNewRole = () => {
       depts.push(theq);
     });
 
-    //question list to get arguments for making new roles
+    //Prompts when making new roles
     let allQuest = [
       {
         type: "input",
         name: "title",
-        message: "what is the title of the new role?"
+        message: "Provide the title of the new role:"
       },
       {
         type: "input",
         name: "salary",
-        message: "what is the salary of the new role?"
+        message: "Provide the salary of the new role?"
       },
       {
         type: "list",
         name: "department",
         choices: depts,
-        message: "which department is this role in?"
+        message: "Which department is this role in?"
       }
     ];
 
