@@ -51,3 +51,55 @@ function initprompt() {
     "quit"]
   }]
   
+  //all possible options from list
+  inquirer1.prompt(firstquest)
+  .then(response => {
+    switch (response.action) {
+      case "View all employees":
+        viewTables("EMPLOYEE");
+        break;
+      case "View all roles":
+        viewTables("ROLE");
+        break;
+      case "View all departments":
+        viewTables("DEPARTMENT");
+        break;
+      case "Add a department":
+        addNewDept();
+        break;
+      case "Add a role":
+        addNewRole();
+        break;
+      case "Add an employee":
+        addNewEmployee();
+        break;
+      case "Update role for an employee":
+        updateRole();
+        break;
+      case "View employees by manager":
+        viewTableEmployeeByManager();
+        break;
+      case "Update an employee's manager":
+        updateManager();
+        break;
+      case "Delete a department":
+        deleteDepartment();
+        break;
+      case "Delete a role":
+        deleteRole();
+        break;
+      case "Delete an employee":
+        deleteEmployee();
+        break;
+      case "View the total budget of a particular department":
+        viewBudgetTable();
+        break;
+      default:
+        connection.end();
+    }
+  })
+  .catch(err => {
+    console.error(err);
+  });
+}
+
